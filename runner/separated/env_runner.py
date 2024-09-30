@@ -42,7 +42,6 @@ class EnvRunner(Runner):
                     rnn_states_critic,
                     actions_env,
                 ) = self.collect(step)
-
                 # Observe reward and next obs
                 # print('******step******', step)
                 obs, rewards, dones = self.envs.step(actions_env, step)
@@ -168,7 +167,6 @@ class EnvRunner(Runner):
                 action_env = action
                 # raise NotImplementedError
 
-
             actions.append(action)
             temp_actions_env.append(action_env)
             action_log_probs.append(_t2n(action_log_prob))
@@ -236,7 +234,7 @@ class EnvRunner(Runner):
                 np.array(list(obs[:, agent_id])),
                 rnn_states[:, agent_id],
                 rnn_states_critic[:, agent_id],
-                np.array([actions])[:, agent_id][0].reshape(1, 4),
+                np.array([actions])[:, agent_id][0].reshape(1, 3),
                 action_log_probs[:, agent_id],
                 values[:, agent_id],
                 rewards[:, agent_id],
@@ -398,7 +396,6 @@ class EnvRunner(Runner):
                     actions_env.append(one_hot_action_env)
 
                 # Obser reward and next obs
-                print('actions_env', actions_env)
                 obs, rewards, dones, infos = self.envs.step(actions_env, step)
                 episode_rewards.append(rewards)
 

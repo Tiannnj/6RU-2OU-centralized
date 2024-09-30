@@ -17,7 +17,6 @@ class ACTLayer(nn.Module):
         self.continuous_action = False
 
         if action_space.__class__.__name__ == "Discrete":
-#            print('Discrete action')
             action_dim = action_space.n
             # self.action_out = Categorical(inputs_dim, action_dim, use_orthogonal, gain)
             self.action_out = Categorical(inputs_dim, action_dim * 2, use_orthogonal, gain)

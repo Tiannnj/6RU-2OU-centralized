@@ -81,7 +81,6 @@ class MahhvDiscreteActionEnv(object):
 
     def reset(self, x):
         obs = self.env.reset(x)
-#        print('obbbbs', np.stack(obs))
         return np.stack(obs)
 
     def close(self):
