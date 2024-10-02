@@ -396,7 +396,7 @@ class vorenv(gym.Env):
             # tmp array to record the RU receive task amount in one step for one OU
             o_tra_tmp = [0, 0, 0]
             for r in range(0, 3):
-                o_tra_tmp[r] = sum(r_receive[o_agent_num * 2 + r])
+                o_tra_tmp[r] = sum(r_receive[o_agent_num * 3 + r])
                 # OU - number for assign increase
                 num_o_tra[r] = num_o_tra[r] + o_tra_tmp[r]
 
@@ -455,7 +455,6 @@ class vorenv(gym.Env):
             else:
                 for v in range(0, 3):
                     r_pre_state[3 + v * 6: 3 + v * 6 + 6] = np.multiply(r_pre_state[3 + v * 6: 3 + v * 6 + 6],  r_receive_new[r_agent_num][v])
-            print(r_pre_state)
             " tasks amount assigned to each MeNB "
             if r_agent_num in (0, 2, 3, 5):
                 num_r_rtr[r_agent_num] = r_pre_state[18:20]
@@ -570,9 +569,9 @@ class vorenv(gym.Env):
             f_r_rtr[agent_r] = (sum(self.r_assign[agent_r])) ** 2 / (2 * z + 0.0000001)
             # rewards_ru[agent_r] = float(r_ddl[agent_r] * rewards_ou[agent_r//1] * f_r_rtr )
         rewards_ru = sum(r_ddl) * (np.prod(rewards_ou) ** 2) * (np.prod(f_r_rtr) ** 2)
-        print('/', rewards_ru, sum(r_ddl))
-        print('//', self.o_tra, '\n', rewards_ou, '\n', np.prod(rewards_ou))
-        print('///', self.r_assign, '\n', f_r_rtr, '\n', np.prod(f_r_rtr))
+        # print('/', rewards_ru, sum(r_ddl))
+        # print('//', self.o_tra, '\n', rewards_ou, '\n', np.prod(rewards_ou))
+        # print('///', self.r_assign, '\n', f_r_rtr, '\n', np.prod(f_r_rtr))
         rewards_ru_average = [rewards_ru] * self.n_r_agents
         # print('rewards_ru', rewards_ru)
 
