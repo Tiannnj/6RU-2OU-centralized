@@ -234,7 +234,7 @@ class EnvRunner(Runner):
                 np.array(list(obs[:, agent_id])),
                 rnn_states[:, agent_id],
                 rnn_states_critic[:, agent_id],
-                np.array([actions])[:, agent_id][0].reshape(1, 3),
+                np.array([actions])[:, agent_id][0].reshape(1, 4),
                 action_log_probs[:, agent_id],
                 values[:, agent_id],
                 rewards[:, agent_id],

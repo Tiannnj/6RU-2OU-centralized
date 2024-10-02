@@ -21,7 +21,7 @@ class MAHHVEnv():
 
     def step_async(self, actions, x):
         self.actions = actions
-        self.x = np.array([[x],[x],[x],[x]])
+        self.x = np.array([[x],[x],[x],[x],[x],[x]])
 
     def step_wait(self):
         results = [env.step(a, x) for (a, env, x) in zip(self.actions, self.envs, self.x)]
