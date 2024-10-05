@@ -49,7 +49,8 @@ class MahhvDiscreteActionEnv(object):
 
 
             # observation space
-            share_obs_dim += self.signal_obs_dim
+            # share_obs_dim += self.signal_obs_dim
+            share_obs_dim = 48
             self.observation_space.append(
                 spaces.Box(
                     low=-np.inf,
@@ -81,6 +82,7 @@ class MahhvDiscreteActionEnv(object):
 
     def reset(self, x):
         obs = self.env.reset(x)
+#        print('obbbbs', np.stack(obs))
         return np.stack(obs)
 
     def close(self):
