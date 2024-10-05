@@ -117,17 +117,38 @@ class EnvRunner(Runner):
                 _ in range(1000)}
         obs = self.envs.reset(0)  # shape = [env_num, agent_num, obs_dim]
         share_obs = []
-        share_obs_group1 = []
-        share_obs_group2 = []
 
         for o in obs:
             share_obs.append(list(chain(*o)))
         share_obs = np.array(share_obs)  # shape = [env_num, agent_num * obs_dim]
+        share_obs_group1 = np.array(list(obs[0][0][0:3]) + list(obs[0][1][0:3]) + list(obs[0][2][0:3]) +
+                                    list(np.array(obs[0][0][3:15])) + list(np.array(obs[0][1][9:15])) + list(
+            np.array(obs[0][2][3:15])) +
+                                    list([np.array(obs[0][0][-3])]) + list([np.array(obs[0][1][-3])]) + list(
+            [np.array(obs[0][2][-3])]) +
+                                    list(np.array(obs[0][0][-2:])) + list(np.array(obs[0][1][-2:])) + list(
+            np.array(obs[0][2][-2:])))
+        share_obs_group1 = np.array(share_obs_group1)
 
-        for agent_id in range(self.num_agents):
+        share_obs_group2 = np.array(list(obs[0][3][0:3]) + list(obs[0][4][0:3]) + list(obs[0][5][0:3]) +
+                                    list(np.array(obs[0][3][3:15])) + list(np.array(obs[0][4][9:15])) + list(
+            np.array(obs[0][5][3:15])) +
+                                    list([np.array(obs[0][3][-3])]) + list([np.array(obs[0][4][-3])]) + list(
+            [np.array(obs[0][5][-3])]) +
+                                    list(np.array(obs[0][3][-2:])) + list(np.array(obs[0][4][-2:])) + list(
+            np.array(obs[0][5][-2:])))
+        share_obs_group2 = np.array(share_obs_group2)
+
+        for agent_id in range(0, 3):
             if not self.use_centralized_V:
-                share_obs = np.array(list(obs[:, agent_id]))
-            self.buffer[agent_id].share_obs[0] = share_obs.copy()
+                share_obs_group1 = np.array(list(obs[:, agent_id]))
+            self.buffer[agent_id].share_obs[0] = share_obs_group1.copy()
+            self.buffer[agent_id].obs[0] = np.array(list(obs[:, agent_id])).copy()
+
+        for agent_id in range(3, 6):
+            if not self.use_centralized_V:
+                share_obs_group2 = np.array(list(obs[:, agent_id]))
+            self.buffer[agent_id].share_obs[0] = share_obs_group2.copy()
             self.buffer[agent_id].obs[0] = np.array(list(obs[:, agent_id])).copy()
 
 
@@ -230,11 +251,38 @@ class EnvRunner(Runner):
             share_obs.append(list(chain(*o)))
         share_obs = np.array(share_obs)
 
-        for agent_id in range(self.num_agents):
+        share_obs_group1 = np.array(list(obs[0][0][0:3]) + list(obs[0][1][0:3]) + list(obs[0][2][0:3]) +
+                                    list(np.array(obs[0][0][3:15])) + list(np.array(obs[0][1][9:15])) + list(np.array(obs[0][2][3:15])) +
+                                    list([np.array(obs[0][0][-3])]) + list([np.array(obs[0][1][-3])]) + list([np.array(obs[0][2][-3])]) +
+                                    list(np.array(obs[0][0][-2:])) + list(np.array(obs[0][1][-2:])) + list(np.array(obs[0][2][-2:])))
+        share_obs_group1 = np.array(share_obs_group1)
+
+        share_obs_group2 = np.array(list(obs[0][3][0:3]) + list(obs[0][4][0:3]) + list(obs[0][5][0:3]) +
+                                    list(np.array(obs[0][3][3:15])) + list(np.array(obs[0][4][9:15])) + list(np.array(obs[0][5][3:15])) +
+                                    list([np.array(obs[0][3][-3])]) + list([np.array(obs[0][4][-3])]) + list([np.array(obs[0][5][-3])]) +
+                                    list(np.array(obs[0][3][-2:])) + list(np.array(obs[0][4][-2:])) + list(np.array(obs[0][5][-2:])))
+        share_obs_group2 = np.array(share_obs_group2)
+
+        for agent_id in range(0, 3):
             if not self.use_centralized_V:
-                share_obs = np.array(list(obs[:, agent_id]))
+                share_obs_group1 = np.array(list(obs[:, agent_id]))
             self.buffer[agent_id].insert(
-                share_obs,
+                share_obs_group1,
+                np.array(list(obs[:, agent_id])),
+                rnn_states[:, agent_id],
+                rnn_states_critic[:, agent_id],
+                np.array([actions])[:, agent_id][0].reshape(1, 4),
+                action_log_probs[:, agent_id],
+                values[:, agent_id],
+                rewards[:, agent_id],
+                masks[:, agent_id],
+            )
+
+        for agent_id in range(3, 6):
+            if not self.use_centralized_V:
+                share_obs_group2 = np.array(list(obs[:, agent_id]))
+            self.buffer[agent_id].insert(
+                share_obs_group2,
                 np.array(list(obs[:, agent_id])),
                 rnn_states[:, agent_id],
                 rnn_states_critic[:, agent_id],

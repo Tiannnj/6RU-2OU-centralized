@@ -24,7 +24,7 @@ num_v = sum([1, 1, 1, 1, 1, 0])
 band_even = 5 / 6
 SNR = (0.2 * 1000 * 10 ** (- PL / 10)) / ((10 ** -17.4) * (band_even * 10 ** 6))
 link_tran = band_even * math.log2(1 + SNR)
-print(link_tran)
+print('link_tran', link_tran)
 num_o_receive = [1, 2, 3]
 total_num_o_r = 0
 total_num_o_r = sum(num_o_r ** 2 for num_o_r in num_o_receive)
@@ -137,4 +137,9 @@ PL = (20 * math.log10(83.78 * 50 + 0.00001)) + 1
 SNR = (1 * 1000 * 10 ** (- PL / 10)) / ((10 ** -17.4) * (band_even_r * 10 ** 6 + 0.000001))
 rate_o2r = band_even_r * math.log2(1 + SNR)  # Mb/s
 delay_o2r = (0.2 * 8) / rate_o2r
-print(delay_o2r)
+print('delay_o2r', delay_o2r)
+
+self.n_v = 10
+self.v_info = {_: [_ * 50 + 10, 0, 0, random.uniform(0.1, 0.6), random.uniform(0.1, 0.6), random.uniform(200, 1000)] for _
+               in range(self.n_v)}
+print(self.v_info)
