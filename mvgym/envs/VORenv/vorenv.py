@@ -74,8 +74,8 @@ class vorenv(gym.Env):
                                     [300, -50, 50], [300, 50, 50],
                                     [350, -50, 50], [350, 50, 50],
                                     [400, -50, 50], [400, 50, 50]])
-        self.m_cpu = np.array([[250], [300], [250], [300], [250], [300],
-                      [250], [300], [250], [300], [250], [300]])
+        self.m_cpu = np.array([[7], [8], [9], [7], [8], [9],
+                      [7], [8], [9], [7], [8], [9]])
 
         self._obs_low = np.repeat([-10000], 20)
         self._obs_high = np.repeat([10000], 20)
@@ -247,8 +247,8 @@ class vorenv(gym.Env):
                                     [300, -50, 50], [300, 50, 50],
                                     [350, -50, 50], [350, 50, 50],
                                     [400, -50, 50], [400, 50, 50]])
-        self.m_cpu = np.array([[250], [300], [250], [300], [250], [300],
-                      [250], [300], [250], [300], [250], [300]])
+        self.m_cpu = np.array([[7], [8], [9], [7], [8], [9],
+                               [7], [8], [9], [7], [8], [9]])
 
         # initial agents' observation
         self.__init_full_obs()
@@ -362,38 +362,38 @@ class vorenv(gym.Env):
                     # task amount that each RU received
                     if o_action[0:5][v] == 1 and o_action[-5:][v] == (r % 3):
                         r_receive[r][v] = 1
-                    dis_o2r = np.sqrt((self.r_location[r][0] - self.o_location[o_agent_num][0]) ** 2 +
-                                      (self.r_location[r][1] - self.o_location[o_agent_num][1]) ** 2 +
-                                      (self.r_location[r][2] - self.o_location[o_agent_num][2]) ** 2)
-                    # path loss
-                    PL = (20 * math.log10(83.78 * dis_o2r + 0.00001)) + 1
-                    # sum of task allocated by OU o_agent_num which is equal to the sum of vehicles to serve
-                    num_r = sum(o_action[0:5])
-                    # average bandwidth
-                    if o_action[0:5][v] == 1:
-                        band_even_r = band_o2r / num_r
-                    else:
-                        band_even_r = 0
-                    # signal noise rate
-                    SNR = (1 * 1000 * 10 ** (- PL / 10)) / ((10 ** -17.4) * (band_even_r * 10 ** 6 + 0.000001))
-                    rate_o2r = band_even_r * math.log2(1 + SNR)  # Mb/s
-                    #                    print('rate_o2r', rate_o2r)
-                    # delay from o to r
-                    if rate_o2r > 0:
-                        delay_o2r = ((self.o_v[o_agent_num][3 + v * 6] * 8) / rate_o2r) * 1000
-                    else:
-                        delay_o2r = 0
-                    # the total delay in the stage 1
-                    #                    print('delay_v2o', delay_v2o, delay_o2r)
-                    # in case that OU choose to receive v task
-                    if o_action[v] == 1:
-                        ou_total_delay = delay_v2o + delay_o2r
-                        ou_delay[o_agent_num][v] = ou_total_delay
-                    # in case that RU is choosen to offloaded
-                    if rate_o2r > 0:
-                        ou_remain_ddl[o_agent_num][v] = ou_remain_ddl[o_agent_num][v] - ou_total_delay
-                        # Generate new vehicle task information
-                        self.o_v_new[o_agent_num][v * 6 + 5] = self.o_v_new[o_agent_num][v * 6 + 5] - ou_total_delay
+                        dis_o2r = np.sqrt((self.r_location[r][0] - self.o_location[o_agent_num][0]) ** 2 +
+                                          (self.r_location[r][1] - self.o_location[o_agent_num][1]) ** 2 +
+                                          (self.r_location[r][2] - self.o_location[o_agent_num][2]) ** 2)
+                        # path loss
+                        PL = (20 * math.log10(83.78 * dis_o2r + 0.00001)) + 1
+                        # sum of task allocated by OU o_agent_num which is equal to the sum of vehicles to serve
+                        num_r = sum(o_action[0:5])
+                        # average bandwidth
+                        if o_action[0:5][v] == 1:
+                            band_even_r = band_o2r / num_r
+                        else:
+                            band_even_r = 0
+                        # signal noise rate
+                        SNR = (1 * 1000 * 10 ** (- PL / 10)) / ((10 ** -17.4) * (band_even_r * 10 ** 6 + 0.000001))
+                        rate_o2r = band_even_r * math.log2(1 + SNR)  # Mb/s
+                        #                    print('rate_o2r', rate_o2r)
+                        # delay from o to r
+                        if rate_o2r > 0:
+                            delay_o2r = ((self.o_v[o_agent_num][3 + v * 6] * 8) / rate_o2r) * 1000
+                        else:
+                            delay_o2r = 0
+                        # the total delay in the stage 1
+                        #                    print('delay_v2o', delay_v2o, delay_o2r)
+                        # in case that OU choose to receive v task
+                        if o_action[v] == 1:
+                            ou_total_delay = delay_v2o + delay_o2r
+                            ou_delay[o_agent_num][v] = ou_total_delay
+                        # in case that RU is choosen to offloaded
+                        if rate_o2r > 0:
+                            ou_remain_ddl[o_agent_num][v] = ou_remain_ddl[o_agent_num][v] - ou_total_delay
+                            # Generate new vehicle task information
+                            self.o_v_new[o_agent_num][v * 6 + 5] = self.o_v_new[o_agent_num][v * 6 + 5] - ou_total_delay
 
             o_receive_tmp = sum(o_action[0:5])
             # OU - number for receiving increase
@@ -553,6 +553,7 @@ class vorenv(gym.Env):
             # The fairness in the RU observation state for re_tra has to be updated
             self.r_assign[r_agent_num] = num_r_rtr[r_agent_num]
             # calculate the reward for each OU
+
 
         for agent_o in range(0, self.n_o_agents):
             x = 0
